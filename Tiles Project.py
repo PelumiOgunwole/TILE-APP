@@ -170,6 +170,7 @@ class Tiling:
 
 
     def tiles_needed(self):
+        # checking something
         self.perimeter_var_result.set(self.perimeter_of_room())
         self.area_var_result.set(self.area_of_room())
         self.tile_area_var.set(self.tile_area())
