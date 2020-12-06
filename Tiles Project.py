@@ -142,6 +142,7 @@ class Tiling:
 
         root.mainloop()
 
+    # added this file to my github profile
     def perimeter_of_room(self):
         perimeter= 2 * (self.length_var.get() + self.width_var.get()) *  self.optionlist[self.unit.get()]
         return round(perimeter,2)
