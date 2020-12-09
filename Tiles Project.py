@@ -1,6 +1,8 @@
 from tkinter import *
-from tkinter import DoubleVar
+from tkinter import filedialog
 from tkinter import PhotoImage
+from tkinter.filedialog import asksaveasfilename
+
 class Tiling:
     def __init__(self,):
 
@@ -24,18 +26,19 @@ class Tiling:
         self.area_var_result=DoubleVar()
         self.skirting_var=DoubleVar()
         self.unit= StringVar()
+        self.convert_from=StringVar()
 
 
 
         root.wm_title("Tiles Number Calculation App",)
         #photo = PhotoImage(file ='tilespicture.png')
         #root.iconphoto(False,photo)
-        root.geometry('400x400')
+        root.geometry('600x500')
         root.resizable=(False, False)
 
         # Label Widgets
-        unit_lbl=Label(root,text="General Units").grid(row=0,column=2)
-        skirt_unit_lbl= Label(root,text="Units Of Skirting Height",).grid(row=0,column=0)
+        unit_lbl=Label(root,text="Convert to").grid(row=0,column=2)
+        skirt_unit_lbl= Label(root,text="Convert From",).grid(row=0,column=0)
 
 
 
@@ -122,13 +125,21 @@ class Tiling:
         self.total_opening_length = Entry(root, text=self.cum_opening_length, justify=RIGHT)
         self.total_opening_length.grid(row=6, column=1, columnspan=2, padx=10, pady=10,sticky=W)
 
-        # Skirting Height Unit converter
-        self.optionlist= {'metres':0.001,'millimeters':1,'feet':0.00328084}
+        # Skirting Height Unit converter Dictionary
+        self.optionlist = {
+            "millimeters" : {'metres': 0.001, 'millimeters': 1, 'feet': 0.00328084},
+            "metres" : {'metres': 1, 'millimeters': 1000, 'feet': 3.2808399},
+            "feet" : {'metres': 0.3048, 'millimeters': 304.8, 'feet': 1}
+        }
+        #self.optionlist2 = {'metres': 1, 'millimeters': 1000, 'feet': 3.2808399}  # If chosen unit is meters
+        #self.optionlist3 = {'metres': 0.3048, 'millimeters': 304.8, 'feet': 1}  # If chosen unit is feet
 
-        self.skirt_unit.set('millimeters')
-        self.Skirt_unit=OptionMenu(root,self.skirt_unit, *self.optionlist).grid(row=0,column=1)
+
 
         # Option Menu Widget
+
+        self.convert_from.set('millimeters')
+        self.Skirt_unit = OptionMenu(root, self.convert_from, *self.optionlist).grid(row=0, column=1)
 
         self.skirt_height.set(150)
         self.Skirting_Height=OptionMenu(root, variable=self.skirt_height,value=100,).grid(row=11,column=1)
@@ -137,29 +148,141 @@ class Tiling:
         self.general_units=OptionMenu(root, self.unit, *self.optionlist).grid(row=0,column=3)
 
         # Button Widget
-        tiles_Button= Button(root,text="Estimate Tile Packs Needed", command=self.tiles_needed).grid(row=12, column=1)
+        update_unit_button= Button(root,text="Update Units",command=lambda: self.unit_conversions(self.convert_from,self.unit)).grid(row=14, column=1)
+        tiles_Button= Button(root,text="Estimate Tile Packs Needed", command=self.tiles_needed).grid(row=14, column=2)
 
+        #  Creating the Menu Bars
+        tile_menu= Menu(root)
+
+        root.config(menu=tile_menu)
+
+        file_menu= Menu(tile_menu,tearoff=0) # Submenu of the original Menu bar. Name: File Menu
+        tile_menu.add_cascade(label="File",menu=file_menu) # Add File menu to Menu bar
+
+        file_menu.add_command(label="Save",command=self.save) # Save button which triggers a command to save
+        file_menu.add_separator()
+        file_menu.add_command(label="New", command=self.New_File) # Create a new file
+        file_menu.add_separator()
+        file_menu.add_command(label="Open", command=self.open_file)  # Triggers the app to quit
+        file_menu.add_separator()
+
+        file_menu.add_command(label="Print", command=self.print)  # Triggers the app to quit
+        file_menu.add_separator()
+
+        file_menu.add_command(label="Exit", command=root.quit) # Triggers the app to quit
+
+        # Help Menu
+        help_menu = Menu(tile_menu, tearoff=0)  # Submenu of the original Menu bar. Name: File Menu
+        tile_menu.add_cascade(label="Help", menu=help_menu)  # Add File menu to Menu bar
+
+        help_menu.add_command(label="About This App", command=self.save)  # Save button which triggers a command to save
+        help_menu.add_separator()
+        help_menu.add_command(label="Getting Started", command=self.New_File)  # Create a new file
+        help_menu .add_separator()
 
         root.mainloop()
 
-    # added this file to my github profile
+
+    def unit_conversions(self, convert_from, convert_to):
+
+        self.length_var.set(self.optionlist[self.convert_from.get()][convert_to.get()] * self.length_var.get())
+
+        self.width_var.set(self.optionlist[self.convert_from.get()][convert_to.get()] * self.width_var.get())
+        self.tile_length_var.set(self.optionlist[self.convert_from.get()][convert_to.get()] * self.tile_length_var.get())
+        self.tile_width_var.set(self.optionlist[self.convert_from.get()][convert_to.get()] * self.tile_width_var.get())
+        self.no_of_tile_value.set(self.optionlist[self.convert_from.get()][convert_to.get()] * self.no_of_tile_value.get())
+        self.tile_length_var.set(self.optionlist[self.convert_from.get()][convert_to.get()] * self.tile_length_var.get())
+        self.cum_opening_length.set(self.optionlist[self.convert_from.get()][convert_to.get()] * self.cum_opening_length.get())
+        self.perimeter_var_result.set(self.optionlist[self.convert_from.get()][convert_to.get()] * self.perimeter_var_result.get())
+        self.area_var_result.set(self.optionlist[self.convert_from.get()][convert_to.get()] * self.area_var_result.get())
+        self.tile_area_var.set(self.optionlist[self.convert_from.get()][convert_to.get()] * self.tile_area_var.get())
+        self.skirt_height.set(self.optionlist[self.convert_from.get()][convert_to.get()] * self.skirt_height.get())
+        self.final_tiles_var.set(self.optionlist[self.convert_from.get()][convert_to.get()] * self.final_tiles_var.get())
+
+    def print(self):
+        pass
+
+    def open_file(self):
+        opendialog= filedialog.askopenfilename(initialdir="C:",title="Pick a file to open",filetypes=(("text files", "*.txt"),("All file types", "*.*")))
+
+
+    def New_File(self):
+        self.length_var.set(0.0)
+        self.width_var.set(0.0)
+        self.tile_length_var.set(0.0)
+        self.tile_width_var.set(0.0)
+        self.no_of_tile_value.set(0.0)
+        self.cum_opening_length.set(0.0)
+        self.perimeter_var_result.set(0.0)
+        self.area_var_result.set(0.0)
+        self.tile_area_var.set(0.0)
+        self.skirt_height.set(0.0)
+        self.final_tiles_var.set(0.0)
+
+
+
+    def save(self):
+        var = ""
+        custom_file_name= asksaveasfilename(defaultextension= ".txt", filetypes=(("Text Files", "*.txt"), ("All file types", "*.*")))
+        outfile=custom_file_name
+        #var=str(self.length_var.get())
+        #outfile.write(var)
+
+        #outfile.close()
+        with open(outfile,'w') as saver:
+            # The use of var is done to make sure we dont use write() more than once
+            var+="Length of Room: " + str(self.length_var.get()) + "\n\n"
+            var+= "Width of Room: " + str(self.width_var.get()) + "\n\n"
+            var+= "Length of Tiles: " + str(self.tile_length_var.get()) + "\n\n"
+            var+= "Width of Tiles: " + str(self.tile_width_var.get()) + "\n\n"
+            var+= "Number of Tiles in Park: " + str(self.no_of_tile_value.get()) + "\n\n"
+            var+= "Total Opening Values: " + str(self.cum_opening_length.get()) + "\n\n"
+            var+= "Calculated Perimeter of Room: " + str(self.perimeter_var_result.get()) + "\n\n"
+            var+= "Calculated Area of Room: " + str(self.area_var_result.get()) + "\n\n"
+            var+= "Calculated Area Of Tiles: " + str(self.tile_area_var.get()) + "\n\n"
+            var+= "Selected Skirting Height: " + str(self.skirt_height.get()) + "\n\n"
+            var+= "Total Number Of Tile Packs Needed: " + str(self.final_tiles_var.get()) + "\n\n"
+
+            saver.write(var)
+            saver.close()
+
+    def conditions(self): # To regulate conversion of units by users
+        if self.unit.get()== "millimeters" and self.default_unit.get() == "millimeters":
+            print(self.unit.get(),"HELLO WORLD")
+            preference1=self.optionlist
+            print(preference1)
+            return preference1
+
+        if self.unit.get()== "feet" and self.default_unit.get() == "millimeters":
+            print(self.unit.get(), "HELLO WORLD")
+            preference2 = self.optionlist3
+            print(preference2)
+            return preference2
+        else:
+            print(self.unit.get(), "HELLO WORLD")
+            preference3= self.optionlist2
+            print(preference3)
+            return preference3
+
+
     def perimeter_of_room(self):
-        perimeter= 2 * (self.length_var.get() + self.width_var.get()) *  self.optionlist[self.unit.get()]
+        perimeter= 2 * (self.length_var.get() + self.width_var.get()) #* self.conditions()[self.unit.get()]
         return round(perimeter,2)
 
     def area_of_room(self):
-        area= self.length_var.get() * self.width_var.get() * self.optionlist[self.unit.get()]* self.optionlist[self.unit.get()]
+        area= self.length_var.get() * self.width_var.get() #* self.optionlist[self.unit.get()]* self.conditions()[self.unit.get()]
         return round(area,2)
 
 
     def tile_area(self):
-        area_of_tiles= self.tile_length_var.get() * self.tile_width_var.get() * self.no_of_tile_value.get()*self.optionlist[self.unit.get()]
+        area_of_tiles= self.tile_length_var.get() * self.tile_width_var.get() * self.no_of_tile_value.get()\
+                       #* self.conditions()[self.unit.get()]
         return round(area_of_tiles,2)
 
 
     def skirting(self):
 
-        skirting_from_a_tile= self.length_var.get()/ (self.skirt_height.get() * self.optionlist[self.skirt_unit.get()] )
+        skirting_from_a_tile= self.length_var.get()/ (self.skirt_height.get()) #* self.conditions()[self.unit.get()])
         openings= self.cum_opening_length.get() # Total opening length in a room
         length_need_skirting= self.perimeter_var_result.get() - openings
         no_of_skirting_needed= length_need_skirting / self.tile_length_var.get()
@@ -171,6 +294,7 @@ class Tiling:
 
 
     def tiles_needed(self):
+        # checking something
         self.perimeter_var_result.set(self.perimeter_of_room())
         self.area_var_result.set(self.area_of_room())
         self.tile_area_var.set(self.tile_area())
@@ -184,4 +308,5 @@ class Tiling:
         #return self.final_tiles_var
 
 
-Tiling()
+t=Tiling()
+t.conditions()
