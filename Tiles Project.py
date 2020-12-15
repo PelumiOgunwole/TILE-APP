@@ -1,8 +1,13 @@
 from tkinter import *
+import tkinter as tk
 from tkinter import filedialog
 from tkinter import PhotoImage
 from tkinter.filedialog import asksaveasfilename
+from PIL import Image
 from tkinter import messagebox
+from ttkthemes import ThemedStyle
+
+
 class Tiling:
     def __init__(self,):
 
@@ -28,86 +33,92 @@ class Tiling:
         self.unit= StringVar()
         self.convert_from=StringVar()
 
+        theme= tk.style()
+        # setting Theme
+        style= ThemedStyle(root)
+        style.set_theme("scidgrey")
+        root.wm_title("Tiles Estimation App",)
 
+        # Set app icon
+        root.iconbitmap(False,'appicon.ico')
 
-        root.wm_title("Tiles Number Calculation App",)
-        #photo = PhotoImage(file ='tilespicture.png')
-        #root.iconphoto(False,photo)
         root.geometry('600x500')
         root.resizable=(False, False)
+        root.grid_rowconfigure(0,weight=1)
+        root.grid_columnconfigure(0,weight=1)
+        root.config(bg='grey')
+        #theme.theme_use()
 
         # Label Widgets
-        unit_lbl=Label(root,text="Convert to").grid(row=0,column=2)
-        skirt_unit_lbl= Label(root,text="Convert From",).grid(row=0,column=0)
+        unit_lbl=Label(root,text="Convert to",bg='grey').grid(row=0,column=2)
+        skirt_unit_lbl= Label(root,text="Convert From",bg='grey').grid(row=0,column=0)
 
+        room_length_Label = Label(root, text="Insert length of room",padx=15,bg='grey')
+        room_length_Label.grid(row=1, column=0)
 
+        room_length_unit= Label(root,textvariable=self.unit,bg='grey').grid(row=1,column =2,sticky=E)
 
-        room_length_Label = Label(root, text="Insert length of room",padx=15,)
-        room_length_Label.grid(row=1, column=0,sticky=W)
+        room_width_Label = Label(root, text="Insert width of room",padx=10,bg='grey' )
+        room_width_Label.grid(row=2, column=0)
 
-        room_length_unit= Label(root,textvariable=self.unit).grid(row=1,column =2)
+        room_width_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=2, column=2,sticky=E)
 
-        room_width_Label = Label(root, text="Insert width of room",padx=10 )
-        room_width_Label.grid(row=2, column=0,sticky=W)
+        tile_length_Label=Label(root,text="Insert Tile Length",bg='grey')
+        tile_length_Label.grid(row=3, column=0)
 
-        room_width_unit = Label(root, textvariable=self.unit).grid(row=2, column=2)
+        tile_length_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=3, column=2,sticky=E)
 
-        tile_length_Label=Label(root,text="Insert Tile Length",)
-        tile_length_Label.grid(row=3, column=0,sticky=W)
+        tile_breadth_Label=Label(root,text="Insert Tile Width",padx=10,bg='grey')
+        tile_breadth_Label.grid(row=4, column=0)
 
-        tile_length_unit = Label(root, textvariable=self.unit).grid(row=3, column=2)
+        tile_width_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=4, column=2,sticky=E)
 
-        tile_breadth_Label=Label(root,text="Insert Tile Width",padx=10,)
-        tile_breadth_Label.grid(row=4, column=0,sticky=W)
+        no_of_tile_in_pack=Label(root,text="No of Tiles in Pack",bg='grey')
+        no_of_tile_in_pack.grid(row=5, column=0)
 
-        tile_width_unit = Label(root, textvariable=self.unit).grid(row=4, column=2)
+        no_of_tilepack_unit = Label(root, text="pieces",bg='grey').grid(row=5, column=2,sticky=E)
 
-        no_of_tile_in_pack=Label(root,text="No of Tiles in Pack",)
-        no_of_tile_in_pack.grid(row=5, column=0,sticky=W)
+        totalOpeningSizes = Label(root, text="Total opening Values",bg='grey')
+        totalOpeningSizes.grid(row=6, column=0,)
 
-        no_of_tilepack_unit = Label(root, text="pieces").grid(row=5, column=2)
-
-        totalOpeningSizes = Label(root, text="Total opening Values")
-        totalOpeningSizes.grid(row=6, column=0, )
-
-        totalOpeningSizes_value = Label(root, textvariable=self.cum_opening_length, justify=RIGHT)
+        totalOpeningSizes_value = Label(root, textvariable=self.cum_opening_length, justify=RIGHT,bg='grey')
         totalOpeningSizes_value.grid(row=6, column=1, )
 
-        total_opening__unit = Label(root, textvariable=self.unit).grid(row=6, column=2)
+        total_opening__unit = Label(root, textvariable=self.unit,bg='grey').grid(row=6, column=2,sticky=E)
 
-        room_perimeter_label = Label(root, text='Room Perimeter', justify=LEFT)
+        room_perimeter_label = Label(root, text='Room Perimeter', justify=LEFT,bg='grey')
         room_perimeter_label.grid(row=7,column=0)
 
-        room_perimeter_label_value= Label(root,textvariable=self.perimeter_var_result, justify=RIGHT)
+        room_perimeter_label_value= Label(root,textvariable=self.perimeter_var_result, justify=RIGHT,bg='grey')
         room_perimeter_label_value.grid(row=7, column=1)
-        room_perimeter_unit = Label(root, textvariable=self.unit).grid(row=7, column=2)
+        room_perimeter_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=7, column=2,sticky=E)
 
-        room_area_label = Label(root,text="Floor Area", justify=LEFT)
+        room_area_label = Label(root,text="Floor Area", justify=LEFT,bg='grey')
         room_area_label.grid(row=8, column=0)
 
-        room_area_label_value = Label(root, textvariable=self.area_var_result,justify= RIGHT)
+        room_area_label_value = Label(root, textvariable=self.area_var_result,justify= RIGHT,bg='grey')
         room_area_label_value.grid(row=8, column=1)
-        room_area_unit = Label(root, textvariable=self.unit,text="^2").grid(row=8, column=2)
+        room_area_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=8, column=2,sticky=E)
 
-        tile_area_label = Label(root, text="Area of Tiles in Pack", justify=RIGHT)
+        tile_area_label = Label(root, text="Area of Tiles in Pack", justify=RIGHT,bg='grey')
         tile_area_label.grid(row=9, column=0, )
 
-        tile_area_label_value=Label(root, textvariable=self.tile_area_var,justify= RIGHT)
+        tile_area_label_value=Label(root, textvariable=self.tile_area_var,justify= RIGHT,bg='grey')
         tile_area_label_value.grid(row=9, column=1,)
 
-        tile_area_unit = Label(root, textvariable=self.unit,text="^2").grid(row=9, column=2)
+        tile_area_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=9, column=2,sticky=E)
 
 
-        final_no_of_tiles_Label=Label(root, text="Total Tiles Pack Needed: ",justify= RIGHT )
+        final_no_of_tiles_Label=Label(root, text="Total Tiles Pack Needed: ",justify= RIGHT,bg='grey' )
         final_no_of_tiles_Label.grid(row=10,column=0)
 
-        final_no_of_tiles_Label_value = Label(root, textvariable=self.final_tiles_var, justify=RIGHT)
+        final_no_of_tiles_Label_value = Label(root, textvariable=self.final_tiles_var, justify=RIGHT,bg='grey')
         final_no_of_tiles_Label_value.grid(row=10, column=1)
 
-        final_packs_unit = Label(root, text='packs').grid(row=10, column=2)
+        final_packs_unit = Label(root, text='packs',bg='grey').grid(row=10, column=2,sticky=E)
 
 
-        skirting_height_labels= Label(root, text="Select Skirting Height",justify=RIGHT).grid(row=11, column=0)
+        skirting_height_labels= Label(root, text="Select Skirting Height",justify=RIGHT,bg='grey').grid(row=11, column=0)
 
 
         # Entries Widgets
@@ -175,37 +186,43 @@ class Tiling:
         help_menu = Menu(tile_menu, tearoff=0)  # Submenu of the original Menu bar. Name: File Menu
         tile_menu.add_cascade(label="Help", menu=help_menu)  # Add File menu to Menu bar
 
-        help_menu.add_command(label="About This App", command=self.save)  # Save button which triggers a command to save
+        help_menu.add_command(label="About This App", command=self.about_app)  # Save button which triggers a command to save
         help_menu.add_separator()
-        help_menu.add_command(label="Getting Started", command=self.New_File)  # Create a new file
+        help_menu.add_command(label="Getting Started", command=self.getting_started)  # Create a new file
         help_menu .add_separator()
 
         root.mainloop()
 
+    def about_app(self):
+        # Gives a brief description of the app
+        pass
+
+    def getting_started(self):
+        window= tk.Toplevel(self.root)
+
 
     def unit_conversions(self, convert_from, convert_to):
+        # This is the function where conversion of unit is triggered
 
-        self.length_var.set(round(self.optionlist[self.convert_from.get()][convert_to.get()] * self.length_var.get(),3))
+        self.length_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.length_var.get(),3))
 
-        self.width_var.set(round(self.optionlist[self.convert_from.get()][convert_to.get()] * self.width_var.get(),3))
+        self.width_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.width_var.get(),3))
 
-        self.tile_length_var.set(round(self.optionlist[self.convert_from.get()][convert_to.get()] * self.tile_length_var.get(),3))
+        self.tile_width_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.tile_width_var.get(),3))
 
-        self.tile_width_var.set(round(self.optionlist[self.convert_from.get()][convert_to.get()] * self.tile_width_var.get(),3))
+        self.tile_length_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.tile_length_var.get(),3))
 
-        self.tile_length_var.set(round(self.optionlist[self.convert_from.get()][convert_to.get()] * self.tile_length_var.get(),3))
+        self.cum_opening_length.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.cum_opening_length.get(),3))
 
-        self.cum_opening_length.set(round(self.optionlist[self.convert_from.get()][convert_to.get()] * self.cum_opening_length.get(),3))
+        self.perimeter_var_result.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.perimeter_var_result.get(),3))
 
-        self.perimeter_var_result.set(round(self.optionlist[self.convert_from.get()][convert_to.get()] * self.perimeter_var_result.get(),3))
+        self.area_var_result.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.area_var_result.get(),3))
 
-        self.area_var_result.set(round(self.optionlist[self.convert_from.get()][convert_to.get()] * self.area_var_result.get(),3))
+        self.tile_area_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.tile_area_var.get()))
 
-        self.tile_area_var.set(round(self.optionlist[self.convert_from.get()][convert_to.get()] * self.tile_area_var.get()))
+        #self.skirt_height.set())
 
-        self.skirt_height.set(round(self.optionlist[self.convert_from.get()][convert_to.get()] * self.skirt_height.get()))
-
-        self.final_tiles_var.set(round(self.optionlist[self.convert_from.get()][convert_to.get()] * self.final_tiles_var.get()))
+        self.final_tiles_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.final_tiles_var.get()))
 
 
     def open_file(self):
@@ -272,7 +289,7 @@ class Tiling:
 
     def skirting(self):
 
-        skirting_from_a_tile= self.length_var.get()/ (self.skirt_height.get())
+        skirting_from_a_tile= self.length_var.get()/ (self.optionlist[self.convert_from.get()][self.unit.get()] * self.skirt_height.get())
         openings= self.cum_opening_length.get() # Total opening length in a room
         length_need_skirting= self.perimeter_var_result.get() - openings
         no_of_skirting_needed= length_need_skirting / self.tile_length_var.get()
