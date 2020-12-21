@@ -6,7 +6,7 @@ from tkinter.filedialog import asksaveasfilename
 from PIL import Image
 from tkinter import messagebox
 from ttkthemes import ThemedStyle
-
+#from LANGUAGE import ENGLISH
 
 class Tiling:
     def __init__(self,):
@@ -33,17 +33,17 @@ class Tiling:
         self.unit= StringVar()
         self.convert_from=StringVar()
 
-        theme= tk.style()
+        #theme= tk.style()
         # setting Theme
         style= ThemedStyle(root)
         style.set_theme("scidgrey")
-        root.wm_title("Tiles Estimation App",)
+        root.title("Tiles Estimation App",)
 
         # Set app icon
         root.iconbitmap(False,'appicon.ico')
 
-        root.geometry('600x500')
-        root.resizable=(False, False)
+        root.geometry('600x600')
+        root.resizable(width=False, height=False)
         root.grid_rowconfigure(0,weight=1)
         root.grid_columnconfigure(0,weight=1)
         root.config(bg='grey')
@@ -194,11 +194,57 @@ class Tiling:
         root.mainloop()
 
     def about_app(self):
+        # Funtion that manages Information About the App
+        root=Tk()
+        root.withdraw() # Important because it prevents duplication of TopLevel Windows
         # Gives a brief description of the app
-        pass
+        about_window=Toplevel(root)
+        about_window.title(" ABOUT")
+        about_window.geometry("200x200")
+        about_window.resizable(False,False)
+
+        lbl=Label(about_window,text="FLOOR TILE ESTIMATION APP\nVersion 1.0\n'Copywright 2020'\n\nDeveloper: PeakSimeon\nEmail: simeonontop@gmail.com")
+        lbl.pack(ipadx=50, ipady=10, fill='both', expand=True)
+
+        b = tk.Button(about_window, text="OK", command=root.destroy)
+        b.pack(pady=10, padx=10, ipadx=20, side='right')
+
 
     def getting_started(self):
-        window= tk.Toplevel(self.root)
+        root= Tk()
+        root.withdraw()  # Important because it prevents duplication of TopLevel Windows
+        get_start_window= tk.Toplevel(root)
+
+        get_start_window.geometry("1000x500")
+        get_start_window.resizable(True, False)
+
+        lbl1 = Label(get_start_window,
+                    text="****TILE NUMBER ESTIMATION APP****\n This app is made to make easy the process for estimatin number of floor tiles needsed to make any room\n"
+                         "It is very Simple to use as it features Unit Conversion based on different needs of Users\n"
+                         "It supports file saving in text form which can then be printed at anytime. Actually this app is good for estimating tile needed for a whole building.")
+        lbl1.pack(ipadx=50, ipady=10, fill='both', expand=True)
+        lbl12 = Label(get_start_window,
+                     text="****SUPPORTED UNITS****\n(a)Millimeters (b)Metres (c) Feet\nThis app supports conversion from one of thiese units to another")
+        lbl12.pack(ipadx=50, ipady=10, fill='both', expand=True)
+
+        lbl13 = Label(get_start_window,
+                      text="****HOW TO USE APP****\nIn the first column, there is an option to chose the units to be used  If you decide to change unit, the values entered"
+                           " will be converted and the unit being used will appear by the\n sides It is the best practice to use the same Units throughout to obtain correct results. Skirting heights are by default in millimeters "
+                           "After entry of all stipulated values, click the lat button by the right for your final results.\n"
+                           "")
+        lbl13.pack(ipadx=50, ipady=10, fill='both', expand=True)
+
+        lbl14 = Label(get_start_window,
+                      text="****TERMS DEFFINITIONS****\nSKIRTING HEIGHT:Skirting tiles are the tiles that laid in the corner of a wall and floor junction.\n\n"
+                           "----PURPOSE OF TILE SKIRTING----\n(1)To avoid making dirts on the wall\n(2)To avoid wall Damage\n(3)For Beautification")
+        lbl14.pack(ipadx=50, ipady=10, fill='both', expand=True)
+
+
+        b = tk.Button(get_start_window, text="OK", command=root.destroy)
+        b.pack(pady=10, padx=10, ipadx=20, side='right')
+
+
+
 
 
     def unit_conversions(self, convert_from, convert_to):
@@ -300,6 +346,7 @@ class Tiling:
 
 
     def tiles_needed(self):
+        # Handling Errors to prevent Zero Division Errors
         try:
             self.perimeter_var_result.set(self.perimeter_of_room())
             self.area_var_result.set(self.area_of_room())
