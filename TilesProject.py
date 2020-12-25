@@ -5,8 +5,9 @@ from tkinter import PhotoImage
 from tkinter.filedialog import asksaveasfilename
 from PIL import Image
 from tkinter import messagebox
-from ttkthemes import ThemedStyle
-#from LANGUAGE import ENGLISH
+#from ttkthemes import ThemedStyle
+import re
+
 
 class Tiling:
     def __init__(self,):
@@ -32,13 +33,9 @@ class Tiling:
         self.skirting_var=DoubleVar()
         self.unit= StringVar()
         self.convert_from=StringVar()
+        self.room_name_lab=StringVar()
 
-        #theme= tk.style()
-        # setting Theme
-        style= ThemedStyle(root)
-        style.set_theme("scidgrey")
-        root.title("Tiles Estimation App",)
-
+        root.title("Tile Number Estimation App")
         # Set app icon
         root.iconbitmap(False,'appicon.ico')
 
@@ -49,96 +46,110 @@ class Tiling:
         root.config(bg='grey')
         #theme.theme_use()
 
+        #reg = (root.register(self.callback))
+        vcmd= (root.register(self.on_validate), '%P')
+
         # Label Widgets
         unit_lbl=Label(root,text="Convert to",bg='grey').grid(row=0,column=2)
         skirt_unit_lbl= Label(root,text="Convert From",bg='grey').grid(row=0,column=0)
 
         room_length_Label = Label(root, text="Insert length of room",padx=15,bg='grey')
-        room_length_Label.grid(row=1, column=0)
+        room_length_Label.grid(row=2, column=0)
 
-        room_length_unit= Label(root,textvariable=self.unit,bg='grey').grid(row=1,column =2,sticky=E)
+        room_length_unit= Label(root,textvariable=self.unit,bg='grey').grid(row=2,column =2,sticky=E)
 
         room_width_Label = Label(root, text="Insert width of room",padx=10,bg='grey' )
-        room_width_Label.grid(row=2, column=0)
+        room_width_Label.grid(row=3, column=0)
 
-        room_width_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=2, column=2,sticky=E)
+        room_width_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=3, column=2,sticky=E)
 
         tile_length_Label=Label(root,text="Insert Tile Length",bg='grey')
-        tile_length_Label.grid(row=3, column=0)
+        tile_length_Label.grid(row=4, column=0)
 
-        tile_length_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=3, column=2,sticky=E)
+        tile_length_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=4, column=2,sticky=E)
 
         tile_breadth_Label=Label(root,text="Insert Tile Width",padx=10,bg='grey')
-        tile_breadth_Label.grid(row=4, column=0)
+        tile_breadth_Label.grid(row=5, column=0)
 
-        tile_width_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=4, column=2,sticky=E)
+        tile_width_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=5, column=2,sticky=E)
 
         no_of_tile_in_pack=Label(root,text="No of Tiles in Pack",bg='grey')
-        no_of_tile_in_pack.grid(row=5, column=0)
+        no_of_tile_in_pack.grid(row=6, column=0)
 
-        no_of_tilepack_unit = Label(root, text="pieces",bg='grey').grid(row=5, column=2,sticky=E)
+        no_of_tilepack_unit = Label(root, text="pieces",bg='grey').grid(row=6, column=2,sticky=E)
 
         totalOpeningSizes = Label(root, text="Total opening Values",bg='grey')
-        totalOpeningSizes.grid(row=6, column=0,)
+        totalOpeningSizes.grid(row=7, column=0,)
 
-        totalOpeningSizes_value = Label(root, textvariable=self.cum_opening_length, justify=RIGHT,bg='grey')
-        totalOpeningSizes_value.grid(row=6, column=1, )
+        #totalOpeningSizes_value = Label(root, textvariable=self.cum_opening_length, justify=RIGHT,bg='grey')
+        #totalOpeningSizes_value.grid(row=7, column=1, )
 
-        total_opening__unit = Label(root, textvariable=self.unit,bg='grey').grid(row=6, column=2,sticky=E)
+        total_opening__unit = Label(root, textvariable=self.unit,bg='grey').grid(row=7, column=2,sticky=E)
 
         room_perimeter_label = Label(root, text='Room Perimeter', justify=LEFT,bg='grey')
-        room_perimeter_label.grid(row=7,column=0)
+        room_perimeter_label.grid(row=8,column=0)
 
         room_perimeter_label_value= Label(root,textvariable=self.perimeter_var_result, justify=RIGHT,bg='grey')
-        room_perimeter_label_value.grid(row=7, column=1)
-        room_perimeter_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=7, column=2,sticky=E)
+        room_perimeter_label_value.grid(row=8, column=1)
+        room_perimeter_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=8, column=2,sticky=E)
 
         room_area_label = Label(root,text="Floor Area", justify=LEFT,bg='grey')
-        room_area_label.grid(row=8, column=0)
+        room_area_label.grid(row=9, column=0)
 
         room_area_label_value = Label(root, textvariable=self.area_var_result,justify= RIGHT,bg='grey')
-        room_area_label_value.grid(row=8, column=1)
-        room_area_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=8, column=2,sticky=E)
+        room_area_label_value.grid(row=9, column=1)
+        room_area_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=9, column=2,sticky=E)
+        #room_area_label_power= Label(root,text="^2",bg='grey').grid(row=9, column=3,)
 
         tile_area_label = Label(root, text="Area of Tiles in Pack", justify=RIGHT,bg='grey')
-        tile_area_label.grid(row=9, column=0, )
+        tile_area_label.grid(row=10, column=0, )
 
         tile_area_label_value=Label(root, textvariable=self.tile_area_var,justify= RIGHT,bg='grey')
-        tile_area_label_value.grid(row=9, column=1,)
+        tile_area_label_value.grid(row=10, column=1,)
 
-        tile_area_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=9, column=2,sticky=E)
+        tile_area_unit = Label(root, textvariable=self.unit,bg='grey').grid(row=10, column=2,sticky=E)
 
 
         final_no_of_tiles_Label=Label(root, text="Total Tiles Pack Needed: ",justify= RIGHT,bg='grey' )
-        final_no_of_tiles_Label.grid(row=10,column=0)
+        final_no_of_tiles_Label.grid(row=11,column=0)
 
         final_no_of_tiles_Label_value = Label(root, textvariable=self.final_tiles_var, justify=RIGHT,bg='grey')
-        final_no_of_tiles_Label_value.grid(row=10, column=1)
+        final_no_of_tiles_Label_value.grid(row=11, column=1)
 
-        final_packs_unit = Label(root, text='packs',bg='grey').grid(row=10, column=2,sticky=E)
+        final_packs_unit = Label(root, text='packs',bg='grey').grid(row=11, column=2,sticky=E)
 
 
-        skirting_height_labels= Label(root, text="Select Skirting Height",justify=RIGHT,bg='grey').grid(row=11, column=0)
+        skirting_height_labels= Label(root, text="Select Skirting Height",justify=RIGHT,bg='grey').grid(row=12, column=0)
 
 
         # Entries Widgets
-        room_length = Entry(root, text=self.length_var, justify=RIGHT)
-        room_length.grid(row=1, column=1, columnspan=3, padx=10, pady=10,sticky=W)
+        room_name_label = Label(root,text="Insert Name of Room",bg="grey").grid(row=1,column=0)
+        room_name_ent = Entry(root, text=self.room_name_lab, justify=RIGHT).grid(row=1, column=1, columnspan=3, padx=10, pady=10,sticky=W)
+
+        room_length = Entry(root, text=self.length_var,justify=RIGHT)
+        room_length.grid(row=2, column=1, columnspan=3, padx=10, pady=10,sticky=W)
+        room_length.config(validate="key",validatecommand=(vcmd))
+
 
         room_width = Entry(root, text=self.width_var, justify=RIGHT)
-        room_width.grid(row=2, column=1, columnspan=3, padx=10, pady=10,sticky=W)
+        room_width.grid(row=3, column=1, columnspan=3, padx=10, pady=10,sticky=W)
+        room_width.config(validate="key", validatecommand=(vcmd))
 
         tile_length = Entry(root, text=self.tile_length_var, justify=RIGHT)
-        tile_length.grid(row=3, column=1, columnspan=2, padx=10, pady=10,sticky=W)
+        tile_length.grid(row=4, column=1, columnspan=2, padx=10, pady=10,sticky=W)
+        tile_length.config(validate="key", validatecommand=(vcmd))
 
         tile_breadth = Entry(root, text=self.tile_width_var, justify=RIGHT)
-        tile_breadth.grid(row=4, column=1, columnspan=2, padx=10, pady=10,sticky=W)
+        tile_breadth.grid(row=5, column=1, columnspan=2, padx=10, pady=10,sticky=W)
+        tile_breadth.config(validate="key", validatecommand=(vcmd))
 
         no_of_tile_in_pack_value = Entry(root, text=self.no_of_tile_value, justify=RIGHT)
-        no_of_tile_in_pack_value.grid(row=5, column=1, columnspan=2, padx=10, pady=10,sticky=W)
+        no_of_tile_in_pack_value.grid(row=6, column=1, columnspan=2, padx=10, pady=10,sticky=W)
+        no_of_tile_in_pack_value.config(validate="key", validatecommand=(vcmd))
 
         self.total_opening_length = Entry(root, text=self.cum_opening_length, justify=RIGHT)
-        self.total_opening_length.grid(row=6, column=1, columnspan=2, padx=10, pady=10,sticky=W)
+        self.total_opening_length.grid(row=7, column=1, columnspan=2, padx=10, pady=10,sticky=W)
+        self.total_opening_length.config(validate="key", validatecommand=(vcmd))
 
         # Skirting Height Unit converter Dictionary
         self.optionlist = {
@@ -154,16 +165,16 @@ class Tiling:
         self.Skirt_unit = OptionMenu(root, self.convert_from, *self.optionlist).grid(row=0, column=1)
 
         self.skirt_height.set(150)
-        self.Skirting_Height=OptionMenu(root, variable=self.skirt_height,value=100,).grid(row=11,column=1)
+        self.Skirting_Height=OptionMenu(root, variable=self.skirt_height,value=100,).grid(row=12,column=1)
 
         self.unit.set('millimeters')
         self.general_units=OptionMenu(root, self.unit, *self.optionlist).grid(row=0,column=3)
 
         # Button Widget
 
-        update_unit_button= Button(root,text="Update Units",command=lambda: self.unit_conversions(self.convert_from,self.unit)).grid(row=14, column=1)
+        update_unit_button= Button(root,text="Update Units",command=lambda: self.unit_conversions(self.convert_from,self.unit)).grid(row=12, column=2)
 
-        tiles_Button= Button(root,text="Estimate Tile Packs Needed", command=self.tiles_needed).grid(row=14, column=2)
+        tiles_Button= Button(root,text="Estimate Tile Packs Needed", command=self.tiles_needed,bg='white').grid(row=14, column=1)
 
         #  Creating the Menu Bars
         tile_menu= Menu(root)
@@ -192,6 +203,21 @@ class Tiling:
         help_menu .add_separator()
 
         root.mainloop()
+
+    def validate(self,string): # This function is meant to filter inputs
+        regex = re.compile(r"(\+|\.)?[0-9,]*$|([0-9,]*\.[0-9,]*$)") # Allows Positve numbers only either of type int or float
+        result = regex.match(string)
+        return (string == ""                        # Allow entry to be empty
+                or (string.count('+') <= 1
+                    and string.count('-') <= 1
+                    and string.count(',') <= 1
+                    and result is not None
+                    and result.group(0) != ""))
+
+
+    def on_validate(self,P):
+        return self.validate(P)
+
 
     def about_app(self):
         # Funtion that manages Information About the App
@@ -249,26 +275,29 @@ class Tiling:
 
     def unit_conversions(self, convert_from, convert_to):
         # This is the function where conversion of unit is triggered
+        try:
+            assert self.length_var.get()>0
+            self.length_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.length_var.get(),3))
 
-        self.length_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.length_var.get(),3))
+            self.width_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.width_var.get(),3))
 
-        self.width_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.width_var.get(),3))
+            self.tile_width_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.tile_width_var.get(),3))
 
-        self.tile_width_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.tile_width_var.get(),3))
+            self.tile_length_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.tile_length_var.get(),3))
 
-        self.tile_length_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.tile_length_var.get(),3))
+            self.cum_opening_length.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.cum_opening_length.get(),3))
 
-        self.cum_opening_length.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.cum_opening_length.get(),3))
+            self.perimeter_var_result.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.perimeter_var_result.get(),3))
 
-        self.perimeter_var_result.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.perimeter_var_result.get(),3))
+            self.area_var_result.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.area_var_result.get(),3))
 
-        self.area_var_result.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.area_var_result.get(),3))
+            self.tile_area_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.tile_area_var.get()))
 
-        self.tile_area_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.tile_area_var.get()))
+            #self.skirt_height.set())
 
-        #self.skirt_height.set())
-
-        self.final_tiles_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.final_tiles_var.get()))
+            self.final_tiles_var.set(round(self.optionlist[convert_from.get()][convert_to.get()] * self.final_tiles_var.get()))
+        except ZeroDivisionError:
+            messagebox("")
 
 
     def open_file(self):
@@ -298,22 +327,26 @@ class Tiling:
         #outfile.write(var)
 
         #outfile.close()
-        with open(outfile,'w') as saver:
+
+        with open(outfile,'a+') as saver:
             # The use of var is done to make sure we dont use write() more than once
-            var+="Length of Room: " + str(self.length_var.get()) + "\n\n"
-            var+= "Width of Room: " + str(self.width_var.get()) + "\n\n"
-            var+= "Length of Tiles: " + str(self.tile_length_var.get()) + "\n\n"
-            var+= "Width of Tiles: " + str(self.tile_width_var.get()) + "\n\n"
-            var+= "Number of Tiles in Park: " + str(self.no_of_tile_value.get()) + "\n\n"
-            var+= "Total Opening Values: " + str(self.cum_opening_length.get()) + "\n\n"
-            var+= "Calculated Perimeter of Room: " + str(self.perimeter_var_result.get()) + "\n\n"
-            var+= "Calculated Area of Room: " + str(self.area_var_result.get()) + "\n\n"
-            var+= "Calculated Area Of Tiles: " + str(self.tile_area_var.get()) + "\n\n"
-            var+= "Selected Skirting Height: " + str(self.skirt_height.get()) + "\n\n"
-            var+= "Total Number Of Tile Packs Needed: " + str(self.final_tiles_var.get()) + "\n\n"
+            var+="\n\n\n\n"
+            var += ("*****" + str(self.room_name_lab.get()).upper() +  "*****"+ "\n\n").center(20)
+            var+="Length of Room: " + str(self.length_var.get())+ " "+ str(self.unit.get()) + "\n\n"
+            var+= "Width of Room: " + str(self.width_var.get())+ " "+str(self.unit.get()) + "\n\n"
+            var+= "Length of Tiles: " + str(self.tile_length_var.get())+ " "+str(self.unit.get()) + "\n\n"
+            var+= "Width of Tiles: " + str(self.tile_width_var.get())+ " "+str(self.unit.get()) + "\n\n"
+            var+= "Number of Tiles in Pack: " + str(self.no_of_tile_value.get())+" "+ "\n\n"
+            var+= "Total Opening Values: " + str(self.cum_opening_length.get())+" "+ str(self.unit.get()) + "\n\n"
+            var+= "Calculated Perimeter of Room: " + str(self.perimeter_var_result.get())+ " "+ str(self.unit.get()) + "\n\n"
+            var+= "Calculated Area of Room: " + str(self.area_var_result.get())+ " "+str(self.unit.get()) + str("^2")+"\n\n"
+            var+= "Calculated Area Of Tiles: " + str(self.tile_area_var.get())+ " "+ str(self.unit.get()) + str("^2")+ "\n\n"
+            var+= "Selected Skirting Height: " + str(self.skirt_height.get())+ " "+str(self.unit.get()) + "\n\n"
+            var+= "Total Number Of Tile Packs Needed: " + str(self.final_tiles_var.get()) + " " + str("packs") + "\n\n"
 
             saver.write(var)
             saver.close()
+
 
 
 
